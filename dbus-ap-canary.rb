@@ -19,6 +19,21 @@ def active_device(nm_service)
   device = devices.first
 end
 
+def ap_list(nm_service, device)
+  device_obj = nm_service.object(device)
+  device_obj.introspect
+  aps = device_obj.GetAccessPoints.first
+  aps.map do |ap_path|
+    ap = {}
+    ap_obj = nm_service.object(ap_path)
+    ap_obj.introspect
+    ssid_bytes = ap_obj.Get("org.freedesktop.NetworkManager.AccessPoint", "Ssid").first
+    ap["ssid"] = ssid_bytes.inject(""){|m,e| m << e.chr}
+    ap["hw_addr"] = ap_obj.Get("org.freedesktop.NetworkManager.AccessPoint", "HwAddress").first
+    ap
+  end
+end
+
 # Get system bus
 system_bus = DBus::SystemBus.instance
 
@@ -39,10 +54,12 @@ nm_object.on_signal('PropertiesChanged') do |e|
 end
 nm_object.on_signal('StateChanged') do |e|
   if e == 70
+    puts "New connection. Scanning..."
     device = active_device(nm_service)
-    puts "active device #{device}"
-    puts 'StateChanged #{e} RestClient.post "https://donpark.org/canary"'
-    RestClient.post "https://donpark.org/canary", {:now => Time.now}
+    aps = ap_list(nm_service, device)
+    payload = {:now => Time.now, :aps => aps}
+    puts "RestClient.post https://donpark.org/canary #{payload.inspect}"
+    RestClient.post "https://donpark.org/canary/", :data => payload, :content_type => :json
   end
 end
 
