@@ -6,6 +6,18 @@ STDOUT.sync = true
 require 'bundler/setup'
 require 'dbus'
 require 'restclient'
+require 'json'
+
+def active_device(nm_service)
+  nm_object = nm_service.object("/org/freedesktop/NetworkManager")
+  connections = nm_object.Get("org.freedesktop.NetworkManager", "ActiveConnections").first
+  connection = connections.first
+
+  conn_obj = nm_service.object(connection)
+  conn_obj.introspect
+  devices = conn_obj.Get("org.freedesktop.NetworkManager.Connection.Active", "Devices").first
+  device = devices.first
+end
 
 # Get system bus
 system_bus = DBus::SystemBus.instance
@@ -18,7 +30,6 @@ nm_object = nm_service.object("/org/freedesktop/NetworkManager")
 
 # Set default interface for the object
 nm_object.default_iface = "org.freedesktop.NetworkManager"
-#nm_object.default_iface = "org.freedesktop.NetworkManager.AccessPoint"
 
 # Introspect it
 nm_object.introspect
@@ -28,6 +39,8 @@ nm_object.on_signal('PropertiesChanged') do |e|
 end
 nm_object.on_signal('StateChanged') do |e|
   if e == 70
+    device = active_device(nm_service)
+    puts "active device #{device}"
     puts 'StateChanged #{e} RestClient.post "https://donpark.org/canary"'
     RestClient.post "https://donpark.org/canary", {:now => Time.now}
   end
