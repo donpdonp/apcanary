@@ -1,0 +1,14 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    mime-types (1.23)
+    rest-client (1.6.7)
+      mime-types (>= 1.16)
+    ruby-dbus (0.9.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  rest-client
+  ruby-dbus
