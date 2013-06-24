@@ -34,6 +34,16 @@ def ap_list(nm_service, device)
   end
 end
 
+def http_post(payload)
+  begin
+    #RestClient.post "https://donpark.org/canary/", :data => payload, :content_type => :json
+    RestClient.post "http://donpark.org:8221/", payload.to_json, :content_type => :json
+  rescue Errno::ENETUNREACH => e
+    puts e
+  end
+end
+
+
 # Get system bus
 system_bus = DBus::SystemBus.instance
 
@@ -59,7 +69,7 @@ nm_object.on_signal('StateChanged') do |e|
     aps = ap_list(nm_service, device)
     payload = {:now => Time.now, :aps => aps}
     puts "RestClient.post https://donpark.org/canary #{payload.inspect}"
-    RestClient.post "https://donpark.org/canary/", :data => payload, :content_type => :json
+    http_post(payload)
   end
 end
 
