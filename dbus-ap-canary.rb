@@ -23,21 +23,29 @@ def ap_list(nm_service, device)
   device_obj = nm_service.object(device)
   device_obj.introspect
   aps = device_obj.GetAccessPoints.first
-  aps.map do |ap_path|
-    ap = {}
-    ap_obj = nm_service.object(ap_path)
-    ap_obj.introspect
-    ssid_bytes = ap_obj.Get("org.freedesktop.NetworkManager.AccessPoint", "Ssid").first
-    ap["ssid"] = ssid_bytes.inject(""){|m,e| m << e.chr}
-    ap["hw_addr"] = ap_obj.Get("org.freedesktop.NetworkManager.AccessPoint", "HwAddress").first
-    ap
-  end
+  aps.map {|ap_path| ap_detail(nm_service, ap_path)}
+end
+
+def ap_detail(nm_service, ap_path)
+  puts "Detailing #{ap_path}"
+  ap = {}
+  ap_obj = nm_service.object(ap_path)
+  ap_obj.introspect
+  ssid_bytes = ap_obj.Get("org.freedesktop.NetworkManager.AccessPoint", "Ssid").first
+  ap["ssid"] = ssid_bytes.inject(""){|m,e| m << e.chr}
+  ap["hw_addr"] = ap_obj.Get("org.freedesktop.NetworkManager.AccessPoint", "HwAddress").first
+  ap
+end
+
+def connection_to_ap_path(nm_service, connection_path)
+  cnn_obj = nm_service.object(connection_path)
+  cnn_obj.introspect
+  cnn_obj.Get("org.freedesktop.NetworkManager.Connection.Active","SpecificObject").first
 end
 
 def http_post(payload)
   begin
-    #RestClient.post "https://donpark.org/canary/", :data => payload, :content_type => :json
-    RestClient.post "http://donpark.org:8221/", payload.to_json, :content_type => :json
+    RestClient.post "https://donpark.org/canary/", payload.to_json, :content_type => :json
   rescue Errno::ENETUNREACH => e
     puts e
   end
@@ -61,15 +69,20 @@ nm_object.introspect
 
 nm_object.on_signal('PropertiesChanged') do |e|
   puts "PropertiesChanged #{e}"
+  if e["State"] == 40
+    @connected = connection_to_ap_path(nm_service, e["ActiveConnections"].first)
+    puts "@connected #{@connected.inspect}"
+  end
 end
+
 nm_object.on_signal('StateChanged') do |e|
   if e == 70
     puts "New connection. Scanning..."
     device = active_device(nm_service)
-    aps = ap_list(nm_service, device)
+    aps = {:connected => ap_detail(nm_service, @connected), :nearby => ap_list(nm_service, device) }
     payload = {:now => Time.now, :aps => aps}
-    puts "RestClient.post https://donpark.org/canary #{payload.inspect}"
-    http_post(payload)
+    result = http_post(payload)
+    puts "RestClient.post https://donpark.org/canary #{payload.inspect} Status: #{result.code}"
   end
 end
 
