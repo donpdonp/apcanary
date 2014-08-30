@@ -1,0 +1,35 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:          canary
+# Required-Start:    $local_fs $remote_fs
+# Required-Stop:
+# X-Start-Before:
+# Default-Start:     2 3 4 5
+# Default-Stop:
+# Short-Description: Report wifi connections
+# Description: Report wifi connections
+### END INIT INFO
+
+. /lib/lsb/init-functions
+
+N=/etc/init.d/canary
+USER=user
+RUBY_HOME=/usr/local/ruby/bin
+
+set -e
+
+case "$1" in
+  start)
+        cd /home/donp/code/canary/ruby
+        sudo -u $USER bash -c "PATH=$PATH:$RUBY_HOME nohup ./dbus-ap-canary.rb > /dev/null &"
+	;;
+  stop|reload|restart|force-reload|status)
+	;;
+  *)
+	echo "Usage: $N start" >&2
+	exit 1
+	;;
+esac
+
+exit 0
