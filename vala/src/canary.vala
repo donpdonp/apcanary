@@ -4,17 +4,20 @@ interface NetworkManager : Object {
     public signal void state_changed (uint state);
 }
 
-int main () {
+int main (string[] args) {
+    var loop = new MainLoop ();
+    Gtk.init (ref args);
+    var window = new Gtk.Window ();
+
+    var button = new Gtk.Button.with_label ("Click me!");
+    window.add (button);
+
+    window.show_all ();
+    window.destroy.connect (loop.quit);
+
     try {
-        NetworkManager netman = Bus.get_proxy_sync (BusType.SYSTEM,
-                                                    "org.freedesktop.NetworkManager",
-                                                    "/org/freedesktop/NetworkManager");
-
-        netman.properties_changed.connect (Wifi.on_property);
-        netman.state_changed.connect (Wifi.on_state);
-
+        Wifi.setup ();
         stdout.printf ("Canary listening\n");
-        var loop = new MainLoop ();
         loop.run ();
     } catch (IOError e) {
         stderr.printf ("%s\n", e.message);

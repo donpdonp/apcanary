@@ -1,4 +1,13 @@
 class Wifi {
+    public static void setup () throws IOError {
+        NetworkManager netman = Bus.get_proxy_sync (BusType.SYSTEM,
+                                                    "org.freedesktop.NetworkManager",
+                                                    "/org/freedesktop/NetworkManager");
+
+        netman.properties_changed.connect (Wifi.on_property);
+        netman.state_changed.connect (Wifi.on_state);
+    }
+
     public static void on_property (HashTable<string, Variant> props) {
         stdout.printf ("on_property keys: ");
         foreach (string key in props.get_keys ()) {
