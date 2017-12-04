@@ -7,12 +7,7 @@ interface NetworkManager : Object {
 int main (string[] args) {
     var loop = new MainLoop ();
     Gtk.init (ref args);
-    var window = new Gtk.Window ();
-
-    var button = new Gtk.Button.with_label ("Click me!");
-    window.add (button);
-
-    window.show_all ();
+    var window = new Window ();
     window.destroy.connect (loop.quit);
 
     try {
