@@ -1,6 +1,10 @@
 class Graphics {
     public static void setup (string[] args) {
         Gtk.init (ref args);
+        try {
+            Gtk.Window.set_default_icon_from_file ("icon.svg");
+        } catch (GLib.Error e) {
+        }
     }
 }
 
