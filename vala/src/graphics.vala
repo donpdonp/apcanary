@@ -9,12 +9,15 @@ class Graphics {
 }
 
 class Window : Gtk.Window {
-    Gtk.Button button;
+    Gtk.Label wifi_label;
+    Gtk.Label http_label;
 
     public Window () {
         var hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 20);
-        button = new Gtk.Button.with_label ("--");
-        hbox.add (button);
+        wifi_label = new Gtk.Label ("-");
+        http_label = new Gtk.Label ("-");
+        hbox.add (wifi_label);
+        hbox.add (http_label);
         add (hbox);
         show_all ();
     }
@@ -23,8 +26,19 @@ class Window : Gtk.Window {
         Rsvg.Handle handle;
     }
 
-    public void showLevel (uint level) {
-        button.set_label ("-" + level.to_string () + "-");
+    public void showLevel (uint level, string color_name) {
+        var color = Gdk.RGBA ();
+        color.parse (color_name);
+        wifi_label.set_label ("-" + level.to_string () + "-");
+        wifi_label.override_background_color (Gtk.StateFlags.NORMAL, color);
+        show_all ();
+    }
+
+    public void showHttp (uint level, string color_name) {
+        var color = Gdk.RGBA ();
+        color.parse (color_name);
+        http_label.set_label ("-" + level.to_string () + "-");
+        http_label.override_background_color (Gtk.StateFlags.NORMAL, color);
         show_all ();
     }
 }

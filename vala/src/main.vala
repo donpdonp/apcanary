@@ -4,8 +4,6 @@ interface NetworkManager : Object {
     public signal void state_changed (uint state);
 }
 
-delegate void LevelCall (uint a);
-
 int main (string[] args) {
     var loop = new MainLoop ();
     Graphics.setup (args);
@@ -14,7 +12,22 @@ int main (string[] args) {
 
     try {
         var netman = Wifi.netman ();
-        var wifi = new Wifi (netman, (i) => { window.showLevel (i); });
+        var wifi = new Wifi (netman, (state) => {
+            var color = "#c00";
+            if (state == 40) {
+                color = "yellow";
+            }
+            if (state == 70) {
+                color = "green";
+            }
+            window.showLevel (state, color);
+        }, (status) => {
+            var color = "#c00";
+            if (status >= 200 && status < 300) {
+                color = "green";
+            }
+            window.showHttp (status, color);
+        });
         stdout.printf ("Canary listening\n");
         loop.run ();
     } catch (IOError e) {

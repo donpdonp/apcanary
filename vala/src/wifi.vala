@@ -1,3 +1,5 @@
+delegate void LevelCall (uint a);
+
 class Wifi {
 
     public static NetworkManager netman () throws IOError {
@@ -7,11 +9,13 @@ class Wifi {
     }
 
     LevelCall ll;
+    LevelCall hl;
 
-    public Wifi (NetworkManager netman, LevelCall l) {
+    public Wifi (NetworkManager netman, LevelCall l, LevelCall h) {
         netman.properties_changed.connect (on_property);
         netman.state_changed.connect (on_state);
         ll = l;
+        hl = h;
     }
 
     public void on_property (HashTable<string, Variant> props) {
@@ -31,8 +35,22 @@ class Wifi {
         ll (state);
         if (state == 70) {
             stderr.printf ("timer start\n");
-            Timeout.add (1000, () => { msg_push (); return false; });
+            Timeout.add (1000, () => { tickle (); return false; });
         }
+    }
+
+    void tickle () {
+        var url = "http://google.com";
+        var verb = "GET";
+        var message = new Soup.Message (verb, url);
+        var session = new Soup.Session ();
+        session.queue_message (message, (sess, msg) => {
+            stderr.printf ("%s %s %u\n", verb, url, msg.status_code);
+            hl (msg.status_code);
+            msg.response_headers.foreach ((name, val) => {
+                stdout.printf ("%s = %s\n", name, val);
+            });
+        });
     }
 
     void msg_push () {
