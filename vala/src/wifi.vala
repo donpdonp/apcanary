@@ -1,8 +1,10 @@
 class Wifi {
+    static NetworkManager netman;
+
     public static void setup () throws IOError {
-        NetworkManager netman = Bus.get_proxy_sync (BusType.SYSTEM,
-                                                    "org.freedesktop.NetworkManager",
-                                                    "/org/freedesktop/NetworkManager");
+        netman = Bus.get_proxy_sync (BusType.SYSTEM,
+                                     "org.freedesktop.NetworkManager",
+                                     "/org/freedesktop/NetworkManager");
 
         netman.properties_changed.connect (on_property);
         netman.state_changed.connect (on_state);
