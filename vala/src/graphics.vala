@@ -15,6 +15,10 @@ class Window : Gtk.Window {
         show_all ();
     }
 
+    public void logo () {
+        Rsvg.Handle handle;
+    }
+
     public void showLevel (uint level) {
         button.set_label ("-" + level.to_string () + "-");
         show_all ();
