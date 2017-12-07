@@ -1,3 +1,9 @@
+class Graphics {
+    public static void setup (string[] args) {
+        Gtk.init (ref args);
+    }
+}
+
 class Window : Gtk.Window {
     public Window () {
         var hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 20);

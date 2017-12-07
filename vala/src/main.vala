@@ -6,9 +6,9 @@ interface NetworkManager : Object {
 
 int main (string[] args) {
     var loop = new MainLoop ();
-// Gtk.init (ref args);
-// var window = new Window ();
-// window.destroy.connect (loop.quit);
+    Graphics.setup (args);
+    var window = new Window ();
+    window.destroy.connect (loop.quit);
 
     try {
         Wifi.setup ();
