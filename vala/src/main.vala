@@ -15,7 +15,8 @@ int main (string[] args) {
         var wifi = new Wifi (netman, (state) => {
             var color = "#c00";
             if (state == 40) {
-                color = "yellow";
+                color = "white";
+                window.showHttp (0, color);
             }
             if (state == 70) {
                 color = "green";
@@ -23,6 +24,9 @@ int main (string[] args) {
             window.showLevel (state, color);
         }, (status) => {
             var color = "#c00";
+            if (status < 100) {
+                color = "yellow";
+            }
             if (status >= 200 && status < 300) {
                 color = "green";
             }

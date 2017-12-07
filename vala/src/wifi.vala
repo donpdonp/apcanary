@@ -51,6 +51,7 @@ class Wifi {
                 stdout.printf ("%s = %s\n", name, val);
             });
         });
+        hl (1);
     }
 
     void msg_push () {
