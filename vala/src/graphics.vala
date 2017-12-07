@@ -14,4 +14,7 @@ class Window : Gtk.Window {
         add (hbox);
         show_all ();
     }
+
+    public void showLevel (uint level) {
+    }
 }

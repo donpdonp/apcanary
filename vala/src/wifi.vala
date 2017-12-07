@@ -1,16 +1,20 @@
 class Wifi {
-    static NetworkManager netman;
 
-    public static void setup () throws IOError {
-        netman = Bus.get_proxy_sync (BusType.SYSTEM,
-                                     "org.freedesktop.NetworkManager",
-                                     "/org/freedesktop/NetworkManager");
-
-        netman.properties_changed.connect (on_property);
-        netman.state_changed.connect (on_state);
+    public static NetworkManager netman () throws IOError {
+        return Bus.get_proxy_sync (BusType.SYSTEM,
+                                   "org.freedesktop.NetworkManager",
+                                   "/org/freedesktop/NetworkManager");
     }
 
-    public static void on_property (HashTable<string, Variant> props) {
+    LevelCall ll;
+
+    public Wifi (NetworkManager netman, LevelCall l) {
+        netman.properties_changed.connect (on_property);
+        netman.state_changed.connect (on_state);
+        ll = (owned) l;
+    }
+
+    public void on_property (HashTable<string, Variant> props) {
         stdout.printf ("on_property keys: ");
         foreach (string key in props.get_keys ()) {
             stdout.printf ("%s ", key);
@@ -22,15 +26,16 @@ class Wifi {
         }
     }
 
-    public static void on_state (uint state) {
+    public void on_state (uint state) {
         stdout.printf ("on_state %" + uint32.FORMAT + "\n", state);
+        ll (state);
         if (state == 70) {
             stderr.printf ("timer start\n");
             Timeout.add (1000, () => { msg_push (); return false; });
         }
     }
 
-    static void msg_push () {
+    void msg_push () {
         stderr.printf ("HTTP POST donpark.org\n");
         var session = new Soup.Session ();
         var message = new Soup.Message ("POST", "http://donpark.org/canary/vala");
