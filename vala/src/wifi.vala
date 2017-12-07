@@ -4,8 +4,8 @@ class Wifi {
                                                     "org.freedesktop.NetworkManager",
                                                     "/org/freedesktop/NetworkManager");
 
-        netman.properties_changed.connect (Wifi.on_property);
-        netman.state_changed.connect (Wifi.on_state);
+        netman.properties_changed.connect (on_property);
+        netman.state_changed.connect (on_state);
     }
 
     public static void on_property (HashTable<string, Variant> props) {
