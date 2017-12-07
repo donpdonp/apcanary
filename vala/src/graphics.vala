@@ -5,16 +5,18 @@ class Graphics {
 }
 
 class Window : Gtk.Window {
+    Gtk.Button button;
+
     public Window () {
         var hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 20);
-        var button1 = new Gtk.Button.with_label ("Click me!");
-        var button2 = new Gtk.Button.with_label ("Click me!");
-        hbox.add (button1);
-        hbox.add (button2);
+        button = new Gtk.Button.with_label ("--");
+        hbox.add (button);
         add (hbox);
         show_all ();
     }
 
     public void showLevel (uint level) {
+        button.set_label ("-" + level.to_string () + "-");
+        show_all ();
     }
 }

@@ -11,7 +11,7 @@ class Wifi {
     public Wifi (NetworkManager netman, LevelCall l) {
         netman.properties_changed.connect (on_property);
         netman.state_changed.connect (on_state);
-        ll = (owned) l;
+        ll = l;
     }
 
     public void on_property (HashTable<string, Variant> props) {
