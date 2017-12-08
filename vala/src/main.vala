@@ -15,22 +15,22 @@ int main (string[] args) {
         var wifi = new Wifi (netman, (state) => {
             var color = "#c00";
             if (state == 40) {
-                color = "white";
-                window.showHttp (0, color);
+                color = "yellow";
+                window.showHttp (0, "white");
             }
             if (state == 70) {
                 color = "green";
             }
             window.showLevel (state, color);
-        }, (status) => {
+        }, (http_status) => {
             var color = "#c00";
-            if (status < 100) {
+            if (http_status < 100) {
                 color = "yellow";
             }
-            if (status >= 200 && status < 300) {
+            if (http_status >= 200 && http_status < 300) {
                 color = "green";
             }
-            window.showHttp (status, color);
+            window.showHttp (http_status, color);
         });
         stdout.printf ("Canary listening\n");
         loop.run ();

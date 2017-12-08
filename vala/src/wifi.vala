@@ -21,13 +21,11 @@ class Wifi {
     public void on_property (HashTable<string, Variant> props) {
         stdout.printf ("on_property keys: ");
         foreach (string key in props.get_keys ()) {
-            stdout.printf ("%s ", key);
+            var prop = props.get (key);
+            var type = prop.get_type_string ();
+            stdout.printf ("%s(%s): %s\n", key, type, prop.print (true));
         }
         stdout.printf ("\n");
-        if (props.contains ("State")) {
-            var prop = props.get ("State");
-            stdout.printf ("Property changed %s %" + uint32.FORMAT + "\n", prop.get_type_string (), prop.get_uint32 ());
-        }
     }
 
     public void on_state (uint state) {

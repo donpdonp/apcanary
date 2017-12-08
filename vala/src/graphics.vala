@@ -29,7 +29,7 @@ class Window : Gtk.Window {
     public void showLevel (uint level, string color_name) {
         var color = Gdk.RGBA ();
         color.parse (color_name);
-        wifi_label.set_label ("-" + level.to_string () + "-");
+        wifi_label.set_markup ("-<span font_size='xx-large'>" + level.to_string () + "</span>-");
         wifi_label.override_background_color (Gtk.StateFlags.NORMAL, color);
         show_all ();
     }
@@ -37,7 +37,7 @@ class Window : Gtk.Window {
     public void showHttp (uint level, string color_name) {
         var color = Gdk.RGBA ();
         color.parse (color_name);
-        http_label.set_label ("-" + level.to_string () + "-");
+        http_label.set_markup ("-<span font_size='xx-large'>" + level.to_string () + "</span>-");
         http_label.override_background_color (Gtk.StateFlags.NORMAL, color);
         show_all ();
     }
