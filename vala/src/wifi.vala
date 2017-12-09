@@ -1,3 +1,17 @@
+[DBus (name = "org.freedesktop.NetworkManager")]
+interface NetworkManager : Object {
+    public signal void properties_changed (HashTable<string, Variant> props);
+    public signal void state_changed (uint state);
+}
+
+[DBus (name = "org.freedesktop.NetworkManager.Connection.Active")]
+interface ActiveConnection : Object {
+    [DBus (name = "Type")]
+    public abstract string ttype { owned get; }
+    [DBus (name = "Uuid")]
+    public abstract string uuid { owned get; }
+}
+
 delegate void LevelCall (uint a);
 
 class Wifi {
@@ -24,6 +38,15 @@ class Wifi {
             var prop = props.get (key);
             var type = prop.get_type_string ();
             stdout.printf ("%s(%s): %s\n", key, type, prop.print (true));
+            if (key == "PrimaryConnection") {
+                var obj_path = prop.get_string ();
+                stdout.printf ("connecting to ActiveConnection @ %s\n", obj_path);
+                ActiveConnection ac = Bus.get_proxy_sync (BusType.SYSTEM,
+                                                          "org.freedesktop.NetworkManager",
+                                                          obj_path);
+                stdout.printf ("about to type\n");
+                stdout.printf ("%s\n", ac.ttype);
+            }
         }
         stdout.printf ("\n");
     }
