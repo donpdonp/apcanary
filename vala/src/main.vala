@@ -1,8 +1,4 @@
-[DBus (name = "org.freedesktop.NetworkManager")]
-interface NetworkManager : Object {
-    public signal void properties_changed (HashTable<string, Variant> props);
-    public signal void state_changed (uint state);
-}
+//
 
 int main (string[] args) {
     var loop = new MainLoop ();

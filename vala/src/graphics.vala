@@ -11,19 +11,34 @@ class Graphics {
 class Window : Gtk.Window {
     Gtk.Label wifi_label;
     Gtk.Label http_label;
+    Gtk.Label title_label;
 
     public Window () {
+        var vbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 20);
+        title_label = new Gtk.Label ("-");
+        vbox.add (title_label);
+
         var hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 20);
         wifi_label = new Gtk.Label ("-");
         http_label = new Gtk.Label ("-");
         hbox.add (wifi_label);
         hbox.add (http_label);
-        add (hbox);
+
+        vbox.add (hbox);
+        add (vbox);
         show_all ();
     }
 
     public void logo () {
         Rsvg.Handle handle;
+    }
+
+    public void setTitle (string title, string color_name) {
+        var color = Gdk.RGBA ();
+        color.parse (color_name);
+        wifi_label.set_markup ("-<span font_size='xx-large'>" + title + "</span>-");
+        wifi_label.override_background_color (Gtk.StateFlags.NORMAL, color);
+        show_all ();
     }
 
     public void showLevel (uint level, string color_name) {
