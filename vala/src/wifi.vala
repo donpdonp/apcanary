@@ -8,11 +8,13 @@ interface NetworkManager : Object {
 interface ActiveConnection : Object {
     [DBus (name = "Type")]
     public abstract string ttype { owned get; }
-    [DBus (name = "Uuid")]
-    public abstract string uuid { owned get; }
+    [DBus (name = "Id")]
+    public abstract string essid { owned get; }
 }
 
 delegate void LevelCall (uint a);
+
+delegate void WordCall (string a);
 
 class Wifi {
 
@@ -24,12 +26,14 @@ class Wifi {
 
     LevelCall ll;
     LevelCall hl;
+    WordCall wl;
 
-    public Wifi (NetworkManager netman, LevelCall l, LevelCall h) {
+    public Wifi (NetworkManager netman, LevelCall l, LevelCall h, WordCall w) {
         netman.properties_changed.connect (on_property);
         netman.state_changed.connect (on_state);
         ll = l;
         hl = h;
+        wl = w;
     }
 
     public void on_property (HashTable<string, Variant> props) {
@@ -40,12 +44,11 @@ class Wifi {
             stdout.printf ("%s(%s): %s\n", key, type, prop.print (true));
             if (key == "PrimaryConnection") {
                 var obj_path = prop.get_string ();
-                stdout.printf ("connecting to ActiveConnection @ %s\n", obj_path);
+                stdout.printf ("*ActiveConnection @ %s\n", obj_path);
                 ActiveConnection ac = Bus.get_proxy_sync (BusType.SYSTEM,
                                                           "org.freedesktop.NetworkManager",
                                                           obj_path);
-                stdout.printf ("about to type\n");
-                stdout.printf ("%s\n", ac.ttype);
+                wl (ac.essid);
             }
         }
         stdout.printf ("\n");

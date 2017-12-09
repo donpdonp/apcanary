@@ -13,6 +13,7 @@ int main (string[] args) {
             if (state == 40) {
                 color = "yellow";
                 window.showHttp (0, "white");
+                window.setTitle ("-", "white");
             }
             if (state == 70) {
                 color = "green";
@@ -27,6 +28,9 @@ int main (string[] args) {
                 color = "green";
             }
             window.showHttp (http_status, color);
+        }, (essid) => {
+            var color = "green";
+            window.setTitle (essid, color);
         });
         stdout.printf ("Canary listening\n");
         loop.run ();

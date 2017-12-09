@@ -36,8 +36,11 @@ class Window : Gtk.Window {
     public void setTitle (string title, string color_name) {
         var color = Gdk.RGBA ();
         color.parse (color_name);
-        wifi_label.set_markup ("-<span font_size='xx-large'>" + title + "</span>-");
-        wifi_label.override_background_color (Gtk.StateFlags.NORMAL, color);
+        title_label.set_markup ("<span font_size='xx-large'>" + title + "</span>");
+        title_label.override_background_color (Gtk.StateFlags.NORMAL, color);
+        var text = Gdk.RGBA ();
+        text.parse ("white");
+        title_label.override_color (Gtk.StateFlags.NORMAL, text);
         show_all ();
     }
 
