@@ -14,11 +14,11 @@ class Window : Gtk.Window {
     Gtk.Label title_label;
 
     public Window () {
-        var vbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 20);
+        var vbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 2);
         title_label = new Gtk.Label ("-");
         vbox.add (title_label);
 
-        var hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 20);
+        var hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 10);
         wifi_label = new Gtk.Label ("-");
         http_label = new Gtk.Label ("-");
         hbox.add (wifi_label);
@@ -49,6 +49,9 @@ class Window : Gtk.Window {
         color.parse (color_name);
         wifi_label.set_markup ("-<span font_size='xx-large'>" + level.to_string () + "</span>-");
         wifi_label.override_background_color (Gtk.StateFlags.NORMAL, color);
+        var text = Gdk.RGBA ();
+        text.parse ("white");
+        wifi_label.override_color (Gtk.StateFlags.NORMAL, text);
         show_all ();
     }
 
@@ -57,6 +60,9 @@ class Window : Gtk.Window {
         color.parse (color_name);
         http_label.set_markup ("-<span font_size='xx-large'>" + level.to_string () + "</span>-");
         http_label.override_background_color (Gtk.StateFlags.NORMAL, color);
+        var text = Gdk.RGBA ();
+        text.parse ("white");
+        http_label.override_color (Gtk.StateFlags.NORMAL, text);
         show_all ();
     }
 }
