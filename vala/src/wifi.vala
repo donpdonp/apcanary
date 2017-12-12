@@ -66,13 +66,35 @@ class Wifi {
     void tickle () {
         var url = "http://google.com";
         var verb = "GET";
-        var message = new Soup.Message (verb, url);
+        var request = new Soup.Message (verb, url);
         var session = new Soup.Session ();
-        session.queue_message (message, (sess, msg) => {
-            stderr.printf ("%s %s %u\n", verb, url, msg.status_code);
-            hl (msg.status_code);
-            msg.response_headers.foreach ((name, val) => {
-                stdout.printf ("%s = %s\n", name, val);
+        session.max_conns = 1;
+        request.got_headers.connect (() => {
+            /* 302 */
+            if (request.status_code == Soup.Status.FOUND) {
+                var new_url = request.response_headers.get_one ("Location");
+                stdout.printf ("!redirect: %s\n", new_url);
+                stdout.printf ("--redirect response--\n");
+                stderr.printf ("%u\n", request.status_code);
+                hl (request.status_code);
+                request.response_headers.foreach ((name, val) => {
+                    stdout.printf ("%s: %s\n", name, val);
+                });
+                /* Finish processing request */
+                // session.cancel_message (request, Soup.Status.CANCELLED);
+            }
+        });
+        session.queue_message (request, (sess, response) => {
+            stdout.printf ("--request--\n");
+            stderr.printf ("%s %s\n", verb, url);
+            response.request_headers.foreach ((name, val) => {
+                stdout.printf ("%s: %s\n", name, val);
+            });
+            stdout.printf ("--response--\n");
+            stderr.printf ("%u\n", response.status_code);
+            hl (response.status_code);
+            response.response_headers.foreach ((name, val) => {
+                stdout.printf ("%s: %s\n", name, val);
             });
         });
         hl (1);
