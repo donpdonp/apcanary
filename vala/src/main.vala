@@ -5,6 +5,7 @@ int main (string[] args) {
     Graphics.setup (args);
     var window = new Window ();
     window.destroy.connect (loop.quit);
+    var lua = new Luanator ();
 
     try {
         var netman = Wifi.netman ();
@@ -29,6 +30,7 @@ int main (string[] args) {
                 color = "green";
             }
             window.showHttp (http_word, color);
+            lua.url (http_word);
         }, (essid) => {
             var color = "green";
             window.setTitle (essid, color);
