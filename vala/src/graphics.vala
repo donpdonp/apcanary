@@ -55,10 +55,10 @@ class Window : Gtk.Window {
         show_all ();
     }
 
-    public void showHttp (uint level, string color_name) {
+    public void showHttp (string level, string color_name) {
         var color = Gdk.RGBA ();
         color.parse (color_name);
-        http_label.set_markup ("-<span font_size='xx-large'>" + level.to_string () + "</span>-");
+        http_label.set_markup ("-<span font_size='xx-large'>" + level + "</span>-");
         http_label.override_background_color (Gtk.StateFlags.NORMAL, color);
         var text = Gdk.RGBA ();
         text.parse ("white");

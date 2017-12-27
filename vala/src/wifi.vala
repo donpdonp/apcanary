@@ -25,10 +25,10 @@ class Wifi {
     }
 
     LevelCall ll;
-    LevelCall hl;
+    WordCall hl;
     WordCall wl;
 
-    public Wifi (NetworkManager netman, LevelCall l, LevelCall h, WordCall w) {
+    public Wifi (NetworkManager netman, LevelCall l, WordCall h, WordCall w) {
         netman.properties_changed.connect (on_property);
         netman.state_changed.connect (on_state);
         ll = l;
@@ -76,7 +76,7 @@ class Wifi {
                 stdout.printf ("!redirect: %s\n", new_url);
                 stdout.printf ("--redirect response--\n");
                 stderr.printf ("%u\n", request.status_code);
-                hl (request.status_code);
+                hl (new_url);
                 request.response_headers.foreach ((name, val) => {
                     stdout.printf ("%s: %s\n", name, val);
                 });
@@ -92,12 +92,12 @@ class Wifi {
             });
             stdout.printf ("--response--\n");
             stderr.printf ("%u\n", response.status_code);
-            hl (response.status_code);
+            hl (response.status_code.to_string ());
             response.response_headers.foreach ((name, val) => {
                 stdout.printf ("%s: %s\n", name, val);
             });
         });
-        hl (1);
+        hl ("1");
     }
 
     void msg_push () {

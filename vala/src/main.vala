@@ -12,22 +12,23 @@ int main (string[] args) {
             var color = "#c00";
             if (state == 40) {
                 color = "yellow";
-                window.showHttp (0, "white");
+                window.showHttp ("0", "white");
                 window.setTitle ("-", "white");
             }
             if (state == 70) {
                 color = "green";
             }
             window.showLevel (state, color);
-        }, (http_status) => {
+        }, (http_word) => {
             var color = "#c00";
+            var http_status = int.parse (http_word);
             if (http_status < 100) {
                 color = "yellow";
             }
             if (http_status >= 200 && http_status < 300) {
                 color = "green";
             }
-            window.showHttp (http_status, color);
+            window.showHttp (http_word, color);
         }, (essid) => {
             var color = "green";
             window.setTitle (essid, color);
