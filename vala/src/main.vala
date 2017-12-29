@@ -24,7 +24,7 @@ int main (string[] args) {
             var color = "#c00";
             var http_status = int.parse (http_word);
             if (http_status < 100) {
-                color = "yellow";
+                color = "brown";
             }
             if (http_status >= 200 && http_status < 300) {
                 color = "green";

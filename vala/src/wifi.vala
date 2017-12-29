@@ -64,7 +64,7 @@ class Wifi {
     }
 
     void tickle () {
-        var url = "http://google.com";
+        var url = "http://detectportal.firefox.com/";
         var verb = "GET";
         var request = new Soup.Message (verb, url);
         var session = new Soup.Session ();
@@ -75,13 +75,13 @@ class Wifi {
                 var new_url = request.response_headers.get_one ("Location");
                 stdout.printf ("!redirect: %s\n", new_url);
                 stdout.printf ("--redirect response--\n");
-                stderr.printf ("%u\n", request.status_code);
+                stderr.printf ("status: %u\n", request.status_code);
                 hl (new_url);
                 request.response_headers.foreach ((name, val) => {
                     stdout.printf ("%s: %s\n", name, val);
                 });
                 /* Finish processing request */
-                // session.cancel_message (request, Soup.Status.CANCELLED);
+                session.cancel_message (request, Soup.Status.CANCELLED);
             }
         });
         session.queue_message (request, (sess, response) => {
@@ -91,13 +91,11 @@ class Wifi {
                 stdout.printf ("%s: %s\n", name, val);
             });
             stdout.printf ("--response--\n");
-            stderr.printf ("%u\n", response.status_code);
-            hl (response.status_code.to_string ());
+            stderr.printf ("status: %u\n", response.status_code);
             response.response_headers.foreach ((name, val) => {
                 stdout.printf ("%s: %s\n", name, val);
             });
         });
-        hl ("1");
     }
 
     void msg_push () {
