@@ -29,6 +29,7 @@ int main (string[] args) {
             if (http_status >= 200 && http_status < 300) {
                 color = "green";
             }
+            stdout.printf ("window showhttp %s %s\n", http_word, color);
             window.showHttp (http_word, color);
             lua.url (http_word);
         }, (essid) => {

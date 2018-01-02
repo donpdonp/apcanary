@@ -64,29 +64,34 @@ class Wifi {
     }
 
     void tickle () {
+        var session = new Soup.Session ();
+        session.user_agent = "Mozilla/5.0 (X11; Linux x86_64; rv:58.0) Gecko/20100101 Firefox/58.0";
+        session.max_conns = 1;
+
         var url = "http://detectportal.firefox.com/";
         var verb = "GET";
         var request = new Soup.Message (verb, url);
-        var session = new Soup.Session ();
-        session.max_conns = 1;
+        // request.set_http_version (@1_1);
+        // request.request_headers.replace ("Host", "detectportal.firefox.com");
         request.got_headers.connect (() => {
             /* 302 */
             if (request.status_code == Soup.Status.FOUND) {
                 var new_url = request.response_headers.get_one ("Location");
-                stdout.printf ("!redirect: %s\n", new_url);
+                stdout.printf ("!redirect: %s HTTP %s\n", new_url, request.http_version == Soup.HTTPVersion .1_1 ? "1.1" : "1.0");
                 stdout.printf ("--redirect response--\n");
                 stderr.printf ("status: %u\n", request.status_code);
                 hl (new_url);
                 request.response_headers.foreach ((name, val) => {
                     stdout.printf ("%s: %s\n", name, val);
                 });
-                /* Finish processing request */
+                /* stop here, dont load the redirect */
                 session.cancel_message (request, Soup.Status.CANCELLED);
             }
         });
+        stdout.printf ("--request sending-- HTTP %s \n", request.http_version == Soup.HTTPVersion .1_1 ? "1.1" : "1.0");
         session.queue_message (request, (sess, response) => {
-            stdout.printf ("--request--\n");
-            stderr.printf ("%s %s\n", verb, url);
+            stdout.printf ("--request sent--\n");
+            stderr.printf ("%s %s HTTP %s %u\n", verb, url, response.http_version == Soup.HTTPVersion .1_1 ? "1.1" : "1.0", request.status_code);
             response.request_headers.foreach ((name, val) => {
                 stdout.printf ("%s: %s\n", name, val);
             });
@@ -95,6 +100,7 @@ class Wifi {
             response.response_headers.foreach ((name, val) => {
                 stdout.printf ("%s: %s\n", name, val);
             });
+            hl (url);
         });
     }
 
